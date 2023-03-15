@@ -6,9 +6,9 @@ from datetime import timedelta
 import random
 
 class Stroj:
-    def __init__(self, ime_stroja, stanje, trenutna_temperatura, toleranca, ure):
+    def __init__(self, ime_stroja, trenutna_temperatura, toleranca, ure):
         self.ime_stroja = ime_stroja
-        self.stanje = stanje #prizgan/ugasnjen
+        self.stanje = 0 #prizgan/ugasnjen (na zacetku nastavimo na ugasnjen, sicer z funkcijo nastavi_trenutno_stanje spremenimo na 1)
         self.trenutna_temperatura = trenutna_temperatura
         self.toleranca = toleranca
         self.ure = ure #seznam seznamov ur ob katerih je prižgan (ce je seznam prazen je vedno ugasnjen)
@@ -17,11 +17,11 @@ class Stroj:
     def v_slovar(self):
         return {
             'ime_stroja': self.ime_stroja,
-            'stanje': self.stanje,
+            #'stanje': self.stanje,
             'trenutna_temperatura': self.trenutna_temperatura,
             'toleranca': self.toleranca,
             'ure': self.ure,
-            'meritve' : self.meritve.v_slovar()
+            'meritve': [meritev.v_slovar() for meritev in self.meritve]
         }
     
     def shrani_stanje(self, ime_datoteke):
@@ -32,11 +32,11 @@ class Stroj:
     @classmethod
     def iz_slovarja(cls, slovar_stanja):
         ime_stroja = slovar_stanja['ime_stroja']
-        stanje = slovar_stanja['stanje']
+        #stanje = slovar_stanja['stanje']
         trenutna_temperatura = slovar_stanja['trenutna_temperatura']
         toleranca = slovar_stanja['toleranca']
         ure = slovar_stanja['ure']
-        self = cls(ime_stroja, stanje, trenutna_temperatura, toleranca, ure)
+        self = cls(ime_stroja, trenutna_temperatura, toleranca, ure)
         for m in slovar_stanja['meritve']:
             self.meritve.append(Meritev.iz_slovarja(m))
         return self
@@ -47,8 +47,14 @@ class Stroj:
         with open(ime_datoteke) as datoteka:
             slovar_stanja = json.load(datoteka)
             return Stroj.iz_slovarja(slovar_stanja)
+
+    #glede na trenuten cas nastavi ali je stroj prizgan ali ugasnjen
+    def nastavi_zacetno_stanje(self, trenuten_cas):
+        #ce smo v casu delovanja in temperatura ne presega tolerance stroj prizgemo
+        if self.cas_delovanja(trenuten_cas) and self.trenutna_temperatura <= self.toleranca:
+            self.stanje = 1
         
-    #stroj je prižgan
+    
     def sporoci_temperaturo(self, trenuten_cas, min_parameter):
         #temperatura, ki jo bomo sporočili
         temperatura = self.trenutna_temperatura 
@@ -56,7 +62,7 @@ class Stroj:
         #stroj je prizgan
         if self.stanje:
             #poračuna novo temperatura (in ugasne stroj)
-            t = random.choice([1, -1, 0], weights=[50, 40, 10])
+            t = random.choices([1, -1, 0], weights=[50, 40, 10])[0]
 
         #stroj je ugasnjen
         else:
@@ -90,8 +96,8 @@ class Stroj:
         if self.ure == []:
             return False
         for r in self.ure:
-            start = r[0]
-            end = r[1]
+            start = datetime.strptime(r[0], '%H:%M:%S.%f').time()
+            end = datetime.strptime(r[1], '%H:%M:%S.%f').time()
             #ce je stroj ves cas prizgan bo start = end in eden od naslednjih pogojev bo izpolnjen
             if start <= end and start <= trenutni_cas and trenutni_cas <= end:
                 t = True
