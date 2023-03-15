@@ -16,6 +16,9 @@ for i in range(20):
     now = datetime.now()
     trenuten_cas = now.time()
 
+    #nastavimo ali je stroj prižgan ali ugasnjen
+    stroj.nastavi_trenutno_stanje(trenuten_cas)
+
     #za vse stroje sporocimo temperaturo in poracunamo naslednjo
     for stroj in stroji:
         min_parameter = 10

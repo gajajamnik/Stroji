@@ -49,10 +49,13 @@ class Stroj:
             return Stroj.iz_slovarja(slovar_stanja)
 
     #glede na trenuten cas nastavi ali je stroj prizgan ali ugasnjen
-    def nastavi_zacetno_stanje(self, trenuten_cas):
+    def nastavi_trenutno_stanje(self, trenuten_cas):
         #ce smo v casu delovanja in temperatura ne presega tolerance stroj prizgemo
         if self.cas_delovanja(trenuten_cas) and self.trenutna_temperatura <= self.toleranca:
             self.stanje = 1
+        #sicer: čas del + nad toler ali ni čas delovanja (ne glede na toleranco) => zapremo
+        else:
+            self.stanje = 0
         
     
     def sporoci_temperaturo(self, trenuten_cas, min_parameter):
@@ -61,28 +64,18 @@ class Stroj:
 
         #stroj je prizgan
         if self.stanje:
-            #poračuna novo temperatura (in ugasne stroj)
             t = random.choices([1, -1, 0], weights=[50, 40, 10])[0]
-
         #stroj je ugasnjen
         else:
             #vsako sekundo se temperatura zmanjsa za 1
             t = -0.1
 
-        #ce temperatura doseže idealno se ne zgodi nič
+        #ce temperatura doseže idealno se ne zgodi nič (ne glede na to a je ugasnjen ali prižgan)
         if temperatura <= min_parameter and t == -1:
             t = 0
 
         #nova temperatura
         self.trenutna_temperatura += t
-
-        #ce nova temperatura presega toleranco stroj ugasnemo
-        if self.trenutna_temperatura > self.toleranca:
-            self.stanje = 0
-
-        #ce je stroj ugasnjen, a v casu delovanja in ne presega tolerance se prižge
-        if self.cas_delovanja(trenuten_cas) and self.trenutna_temperatura <= self.toleranca:
-            self.stanje = 1
 
         #belezimo novo meritev
         meritev = Meritev(trenuten_cas, temperatura)
