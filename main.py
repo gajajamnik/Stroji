@@ -21,6 +21,8 @@ for i in range(20):
         min_parameter = 10
         stroj.sporoci_temperaturo(trenuten_cas, min_parameter)
 
+    stroj.shrani_stanje(os.path.join('stroji', f'{stroj.ime_stroja}.json'))
+
     #spremembe se dogajajo na desetinko
     time.sleep(0.100)
 
