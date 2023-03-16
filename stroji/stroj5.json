@@ -1,0 +1,14 @@
+{
+    "ime_stroja": "stroj5",
+    "trenutna_temperatura": 39,
+    "toleranca": 40,
+    "ure": [
+        [
+            "15:00:00.000",
+            "12:00:00.000"
+        ]
+    ],
+    "meritve": [
+   
+    ]
+}
