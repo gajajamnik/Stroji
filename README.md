@@ -15,3 +15,5 @@ V mapi stroji so zapisane konfiguracije petih različnih strojev:
 - stroj3: stroj je ves čas prižgan, začetna temperatura je nastavljena na 20
 - stroj4: stroj je prižgan 23.00 - 10.00, začetna temperatura je nastavljena na 15  
 - stroj5: stroj je prižgan 15.00- 12.00, zacetna temperatura je 39
+
+Program poženemo z datoteko main.py.
