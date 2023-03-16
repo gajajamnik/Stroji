@@ -17,7 +17,6 @@ class Stroj:
     def v_slovar(self):
         return {
             'ime_stroja': self.ime_stroja,
-            #'stanje': self.stanje,
             'trenutna_temperatura': self.trenutna_temperatura,
             'toleranca': self.toleranca,
             'ure': self.ure,
@@ -32,7 +31,6 @@ class Stroj:
     @classmethod
     def iz_slovarja(cls, slovar_stanja):
         ime_stroja = slovar_stanja['ime_stroja']
-        #stanje = slovar_stanja['stanje']
         trenutna_temperatura = slovar_stanja['trenutna_temperatura']
         toleranca = slovar_stanja['toleranca']
         ure = slovar_stanja['ure']
@@ -57,21 +55,22 @@ class Stroj:
         else:
             self.stanje = 0
         
-    
+    #sporoci trenutno temperaturo stroja in poračuna naslednjo
     def sporoci_temperaturo(self, trenuten_cas, min_parameter):
         #temperatura, ki jo bomo sporočili
         temperatura = self.trenutna_temperatura 
 
         #stroj je prizgan
         if self.stanje:
+            #vsako desetinko se temp poveca za 1 z verjet 0.5, zmanjsa za -1 z verj 0.4 in ostane enaka z verj 0.1
             t = random.choices([1, -1, 0], weights=[50, 40, 10])[0]
         #stroj je ugasnjen
         else:
-            #vsako sekundo se temperatura zmanjsa za 1
+            #vsako desetinko se temperatura zmanjsa za 0.1(vsako sekundo za 1)
             t = -0.1
 
         #ce temperatura doseže idealno se ne zgodi nič (ne glede na to a je ugasnjen ali prižgan)
-        if temperatura <= min_parameter and t == -1:
+        if temperatura + t <= min_parameter and t < 0:
             t = 0
 
         #nova temperatura
@@ -117,5 +116,4 @@ class Meritev:
         cas = datetime.strptime(slovar['cas'], '%H:%M:%S.%f').time()
         temperatura = slovar['temperatura']
         self = cls(cas, temperatura)
-
         return self
