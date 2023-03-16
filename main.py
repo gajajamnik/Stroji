@@ -48,4 +48,4 @@ def simulacija(cas_interval, min_parameter):
         time.sleep(0.100 - d)
 
 
-simulacija(20, 10)
+simulacija(10, 10)
